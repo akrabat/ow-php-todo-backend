@@ -26,17 +26,21 @@ package:
   individually: true
   exclude:
      - "*"
+     - "src/actions/*"
   include:
      - "vendor/**"
-     - "src/actions/*"
      - "src/Todo/*"
      - "src/AppContainer.php"
 
 functions:
-
   create-schema:
     handler: src/actions/createSchema.main
     name: "todo-backend/create-schema"
+    package:
+      include:
+        - src/actions/createSchema.php
+      exclude:
+        - src/Todo/*
 
   root:
     handler: src/actions/root.main
@@ -48,7 +52,7 @@ functions:
           resp: http
     package:
       include:
-        - src/actions/main.php
+        - src/actions/root.php
 
   list-todos:
     handler: src/actions/listTodos.main
@@ -58,6 +62,9 @@ functions:
           path: /todos
           method: get
           resp: http
+    package:
+      include:
+        - src/actions/listTodos.php
 
   add-todo:
     handler: src/actions/addTodo.main
@@ -69,6 +76,9 @@ functions:
           path: /todos
           method: post
           resp: http
+    package:
+      include:
+        - src/actions/addTodo.php
 
   delete-all-todos:
     handler: src/actions/deleteAllTodos.main
@@ -80,6 +90,9 @@ functions:
           path: /todos
           method: delete
           resp: http
+    package:
+      include:
+        - src/actions/deleteAllTodos.php
 
   show-todo:
     handler: src/actions/showTodo.main
@@ -91,6 +104,9 @@ functions:
           path: /todos/{id}
           method: get
           resp: http
+    package:
+      include:
+        - src/actions/showTodo.php
 
   edit-todo:
     handler: src/actions/editTodo.main
@@ -102,6 +118,9 @@ functions:
           path: /todos/{id}
           method: patch
           resp: http
+    package:
+      include:
+        - src/actions/editTodo.php
 
   delete-todo:
     handler: src/actions/deleteTodo.main
@@ -113,6 +132,9 @@ functions:
           path: /todos/{id}
           method: delete
           resp: http
+    package:
+      include:
+        - src/actions/deleteTodo.php
 
 
 #    Functions can be defined using sequences rather than referring 
