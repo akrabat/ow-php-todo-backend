@@ -2,8 +2,7 @@
 
 namespace Todo;
 
-use InvalidArgumentException;
-use \strlen;
+use TodoInvalidDataException;
 
 class Todo
 {
@@ -41,7 +40,7 @@ class Todo
     private function validateId(int $id)
     {
         if ($id <= 0) {
-            throw new InvalidArgumentException("Id must be positive", 400);
+            throw new TodoInvalidDataException("Id must be positive");
         }
 
         return $id;
@@ -50,10 +49,10 @@ class Todo
     private function validateTitle(string $title)
     {
         if (strlen($title) === 0) {
-            throw new InvalidArgumentException("Title is too short", 400);
+            throw new TodoInvalidDataException("Title is too short");
         }
         if (strlen($title) > 100) {
-            throw new InvalidArgumentException("Title is too long", 400);
+            throw new TodoInvalidDataException("Title is too long");
         }
 
         return $title;
@@ -67,7 +66,7 @@ class Todo
     private function validateOrder(int $order)
     {
         if ($order <= 0) {
-            throw new InvalidArgumentException("Order must be positive");
+            throw new TodoInvalidDataException("Order must be positive");
         }
 
         return $order;
