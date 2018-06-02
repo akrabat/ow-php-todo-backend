@@ -1,6 +1,6 @@
-# TodoBackend for OpenWhisk PHP
+# Todo-Backend for OpenWhisk PHP
 
-This is an [OpenWhisk](http://openwhisk.org) API written in PHP that implements [TodoBackend](http://todobackend.com).
+This is an [OpenWhisk](http://openwhisk.org) API written in PHP that implements [Todo-Backend](http://todobackend.com).
 
 
 It uses [Pimple](https://pimple.symfony.com) for dependency injection and [Fractal](http://fractal.thephpleague.com) for the presentation layer. The data is stored in (PostgreSQL](https://www.postgresql.org) hosted by [ElephantSQL](https://www.elephantsql.com) via PDO.
