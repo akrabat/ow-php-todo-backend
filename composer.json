@@ -1,0 +1,22 @@
+{
+    "name": "akrabat/ow-php-todo-backend",
+    "description": "An Todo Backend API built in PHP on OpenWhisk",
+    "license": "MIT",
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
+    },
+    "autoload": {
+        "psr-4": {
+            "Todo\\": "src/Todo/"
+        },
+        "classmap": [
+            { "App\\Container": "src/AppContainer.php" }
+        ]
+    },
+    "require": {
+        "php": "~7.1",
+        "league/fractal": "^0.17.0",
+        "pimple/pimple": "^3.2"
+    }
+}

@@ -1,66 +1,57 @@
-# Serverless OpenWhisk PHP Template
+# TodoBackend for OpenWhisk PHP
 
-Hello! 😎
-
-This is a template PHP service for the OpenWhisk platform. Before you can deploy your service, please follow the instructions below…
-
-### Have you set up your account credentials?
-
-Before you can deploy your service to OpenWhisk, you need to have an account registered with the platform.
-
-- *Want to run the platform locally?* Please read the project's [*Quick Start*](https://github.com/openwhisk/openwhisk#quick-start) guide for deploying it locally.
-- *Want to use a hosted provider?* Please sign up for an account with [IBM Bluemix](https://console.ng.bluemix.net/) and then follow the instructions for getting access to [OpenWhisk on Bluemix](https://console.ng.bluemix.net/openwhisk/). 
-
-Account credentials for OpenWhisk can be provided through a configuration file or environment variables. This plugin requires the API endpoint, namespace and authentication credentials.
-
-**Do you want to use a configuration file for storing these values?** Please [follow the instructions](https://console.ng.bluemix.net/openwhisk/cli) for setting up the OpenWhisk command-line utility. This tool stores account credentials in the `.wskprops` file in the user's home directory. The plugin automatically extracts credentials from this file at runtime.  No further configuration is needed.
-
-**Do you want to use environment variables for credentials?** Use the following environment variables to be pass in account credentials. These values override anything extracted from the configuration file.
-
-- *OW_APIHOST* - Platform endpoint, e.g. `openwhisk.ng.bluemix.net`
-- *OW_AUTH* - Authentication key, e.g. `xxxxxx:yyyyy
+This is an [OpenWhisk](http://openwhisk.org) API written in PHP that implements [TodoBackend](http://todobackend.com).
 
 
+It uses [Pimple](https://pimple.symfony.com) for dependency injection and [Fractal](http://fractal.thephpleague.com) for the presentation layer. The data is stored in (PostgreSQL](https://www.postgresql.org) hosted by [ElephantSQL](https://www.elephantsql.com) via PDO.
 
-### Have you installed and setup the provider plugin?
-
-Using the framework with the OpenWhisk platform needs you to install the provider plugin and link this to your service. 
-
-####  Install the provider plugin
-
-```
-$ npm install --global serverless-openwhisk
-```
-
-*Due to an [outstanding issue](https://github.com/serverless/serverless/issues/2895) with provider plugins, the [OpenWhisk provider](https://github.com/serverless/serverless-openwhisk) must be installed as a global module.*
+# Set up
 
 
-#### Link provider plugin to service directory
+1. Ensure you have an an [IBM Cloud](https://www.ibm.com/cloud/) account to deploy to their OpenWhisk service (called  Functions)
+2. Set up the [`bx` command line tool](https://console.bluemix.net/openwhisk/learn/cli) and set your [workspace](https://console.bluemix.net/docs/cli/reference/bluemix_cli/bx_cli.html#bluemix_target).
+3. Set up a (free) ElephantSQL service in your IBM Cloud and bind the credentials to an OpenWhisk package called "todo-backend":
 
-Using `npm link` will import the provider plugin into the service directory. Running `npm install` will automatically perform this using a `post install` script.
+    ```shell
+    $ bx service create elephantsql turtle bookshelf-db
+    $ bx service key-create bookshelf-db key1
+    $ bx wsk package create todo-backend
+    $ bx wsk service bind elephantsql --instance bookshelf-db todo-backend
+    ```
+4. Install the [Serverless Framework](https://serverless.com)
 
-```
-$ npm link serverless-openwhisk
-or
-$ npm install
-```
+    ```shell
+    $ npm install --global serverless serverless-openwhisk
+    ```
 
+5. Clone this repo
+6. Run the package managers:
 
+    ```shell
+    $ npm install
+    $ composer install
+    ```
 
-**_…and that's it!_**
+7. Deploy the API using the `sls` command:
 
-### Deploy Service
+    ```shell
+    $ sls deploy
+    ```
 
-Use the `serverless` command to deploy your service. The sample `handler.js` file can be deployed without modification.
+    Take a note of the URL to the "`list-todos`" endpoint in the "**`endpoints (api-gw)`**" section as we'll need it later.
 
-```shell
-serverless deploy
-```
+8. Create the database table
 
+    ```shell
+    $ sls invoke -f create-schema
+    ```
 
+Your API is now up and running.
 
-### Issues / Feedback / Feature Requests?
+## Running the test
 
-If you have any issues, comments or want to see new features, please file an issue in the project repository:
+Visit the [TodoBacked test suite](http://todobackend.com/specs/index.html) and enter the `list-todos` endpoint from the `endpoints (api-gw)` section when you ran `sls deploy`. You can run `sls info`  to view it again. 
 
-https://github.com/serverless/serverless-openwhisk
+Press the *Run tests* button.
+
+![Screen shot of successful test run](https://raw.githubusercontent.com/akrabat/ow-php-todo-backend/master/tests-screenshot.png)

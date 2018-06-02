@@ -22,17 +22,98 @@ provider:
   runtime: php
 
 # you can add packaging information here
-#package:
-#  include:
-#    - include-me.js
-#    - include-me-dir/**
-#  exclude:
-#    - exclude-me.js
-#    - exclude-me-dir/**
+package:
+  individually: true
+  exclude:
+     - "*"
+  include:
+     - "vendor/**"
+     - "src/actions/*"
+     - "src/Todo/*"
+     - "src/AppContainer.php"
 
 functions:
-  hello:
-    handler: handler.hello
+
+  create-schema:
+    handler: src/actions/createSchema.main
+    name: "todo-backend/create-schema"
+
+  root:
+    handler: src/actions/root.main
+    name: "todo-backend/root"
+    events:
+      - http:
+          path: /
+          method: get
+          resp: http
+    package:
+      include:
+        - src/actions/main.php
+
+  list-todos:
+    handler: src/actions/listTodos.main
+    name: "todo-backend/list-todos"
+    events:
+      - http:
+          path: /todos
+          method: get
+          resp: http
+
+  add-todo:
+    handler: src/actions/addTodo.main
+    name: "todo-backend/add-todo"
+    annotations:
+        raw-http: true
+    events:
+      - http:
+          path: /todos
+          method: post
+          resp: http
+
+  delete-all-todos:
+    handler: src/actions/deleteAllTodos.main
+    name: "todo-backend/delete-all-todos"
+    annotations:
+        raw-http: true
+    events:
+      - http:
+          path: /todos
+          method: delete
+          resp: http
+
+  show-todo:
+    handler: src/actions/showTodo.main
+    name: "todo-backend/show-todo"
+    annotations:
+        raw-http: true
+    events:
+      - http:
+          path: /todos/{id}
+          method: get
+          resp: http
+
+  edit-todo:
+    handler: src/actions/editTodo.main
+    name: "todo-backend/edit-todo"
+    annotations:
+        raw-http: true
+    events:
+      - http:
+          path: /todos/{id}
+          method: patch
+          resp: http
+
+  delete-todo:
+    handler: src/actions/deleteTodo.main
+    name: "todo-backend/delete-todo"
+    annotations:
+        raw-http: true
+    events:
+      - http:
+          path: /todos/{id}
+          method: delete
+          resp: http
+
 
 #    Functions can be defined using sequences rather than referring 
 #    to a handler.
