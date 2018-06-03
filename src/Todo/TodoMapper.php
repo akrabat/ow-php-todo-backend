@@ -69,7 +69,7 @@ class TodoMapper
 
     public function deleteAll() : void
     {
-        $sql = 'DELETE FROM todos';
+        $sql = 'TRUNCATE todos RESTART IDENTITY';
         $statement = $this->pdo->prepare($sql);
         $statement->execute();
     }
