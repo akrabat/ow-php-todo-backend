@@ -86,6 +86,7 @@ functions:
     annotations:
         raw-http: true
     events:
+      - trigger: cleandb_trigger
       - http:
           path: /todos
           method: delete
@@ -136,36 +137,16 @@ functions:
       include:
         - src/actions/deleteTodo.php
 
-
-#    Functions can be defined using sequences rather than referring 
-#    to a handler.
-#    sequence:
-#      - parse_input
-#      - do_some_algorithm
-#      - construct_output
-
-#    The following are a few example events you can configure
-#    Check the event documentation for details
-#    events:
-#      - http: GET /api/users/create
-#      - trigger: trigger_name
-
+resources:
+  triggers:
+    # Delete all records in the database every hour
+    cleandb_trigger:
+      feed: /whisk.system/alarms/alarm
+      feed_parameters:
+        cron: '0 3 * * *'
 
 # extend the framework using plugins listed here:
 # https://github.com/serverless/plugins
 plugins:
   - serverless-openwhisk
 
-# you can define custom triggers and trigger feeds using the resources section.
-#
-#resources:
-#  triggers:
-#    my_trigger:
-#      parameters: 
-#        hello: world    
-#    alarm_trigger:
-#      parameters: 
-#        hello: world
-#     feed: /whisk.system/alarms/alarm
-#     feed_parameters: 
-#       cron: '*/8 * * * * *'
