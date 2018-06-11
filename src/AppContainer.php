@@ -26,10 +26,8 @@ class AppContainer extends Container
 
         $configuration ['settings'] = [
             'db_credentials_url' => $dbCredentialsUrl,
-            'base_url' => $this->determineBaseUrl($args['__ow_headers'] ?? []),
+            'base_url' => $this->determineBaseUrl($args),
         ];
-
-        putenv("BASE_URL=".$configuration['settings']['base_url']);
 
         /**
          * Factory to create a PDO instance
@@ -76,21 +74,28 @@ class AppContainer extends Container
     }
 
     /**
-     * Determine the base URL from the x-forwarded-url header
+     * Determine the base URL from the x-forwarded-url header by
+     * removing __ow_path from the end
      */
-    private function determineBaseUrl(array $headers) : string
+    private function determineBaseUrl(array $args) : string
     {
-        if (!isset($headers['x-forwarded-url'])) {
+        if (!isset($args['__ow_headers']['x-forwarded-url'])
+            || !isset($args['__ow_path'])) {
             return '';
         }
 
-        $parts = explode('/', $headers['x-forwarded-url']);
+        $url = $args['__ow_headers']['x-forwarded-url'];
 
-        $last = array_pop($parts);
-        if (is_numeric($last)) {
-            // last element was an id, so next one is the resource
-            array_pop($parts);
-        }
-        return implode('/', $parts);
+        $path = $args['__ow_path'];
+        $length = strlen($url) - strlen($path);
+        $baseUrl = substr($url, 0, $length);
+
+        // Work around API Gateway's __ow_path inconsistency
+        // weirdly, when the API Gateway definition has a placeholder in it (such as {id}), then
+        // __ow_path will include the "/ow-php-todo-backend/todos" prefix, but if the definition does not
+        // include a placeholder, then __ow_path doesn't include this prefix.
+        $baseUrl = str_replace('/ow-php-todo-backend/todos', '', $baseUrl);
+        $baseUrl .= '/ow-php-todo-backend/todos';
+        return $baseUrl;
     }
 }

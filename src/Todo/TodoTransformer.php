@@ -22,7 +22,7 @@ class TodoTransformer extends TransformerAbstract
             'title' => $data['title'],
             'completed' => $data['completed'],
             'order' => $data['order'],
-            'url' => $this->baseUrl . '/todos/' . $data['id'],
+            'url' => $this->baseUrl . '/' . $data['id'],
         ];
     }
 }
