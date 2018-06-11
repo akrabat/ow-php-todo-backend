@@ -19,26 +19,26 @@ class AppContainer extends Container
      */
     public function __construct(array $args)
     {
-        $dbCredentialsUrl = $args['__bx_creds']['elephantsql']['uri'] ?? '';
-        if ($dbCredentialsUrl === '') {
-            throw new InvalidArgumentException('Missing database credentials');
+        if (!isset($args['__bx_creds']['elephantsql']['uri'])) {
+            throw new InvalidArgumentException("ElephantSQL instance has not been bound");
         }
+        $credentials = parse_url($args['__bx_creds']['elephantsql']['uri']);
 
         $configuration ['settings'] = [
-            'db_credentials_url' => $dbCredentialsUrl,
             'base_url' => $this->determineBaseUrl($args),
         ];
 
         /**
          * Factory to create a PDO instance
          */
-        $configuration[PDO::class] = function (Container $c) {
-            $url = $c['settings']['db_credentials_url'];
-            $credentials = parse_url($url);
-            $db = trim($credentials['path'], '/');
+        $configuration[PDO::class] = function (Container $c) use ($credentials) {
+            $host = $credentials['host'];
+            $port = $credentials['port'];
+            $dbName = trim($credentials['path'], '/');
+            $user = $credentials['user'];
+            $password = $credentials['pass'];
 
-            $dsn = "pgsql:host={$credentials['host']};port={$credentials['port']};"
-                . "dbname=$db;user={$credentials['user']};password={$credentials['pass']}";
+            $dsn = "pgsql:host=$host;port=$port;dbname=$dbName;user=$user;password=$password";
 
             $pdo = new PDO($dsn);
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
